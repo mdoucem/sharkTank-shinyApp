@@ -2,6 +2,8 @@
 
 This Shiny App helps to visualize the deals that have been made on Shark Tank.
 
+App is available here: https://mdoucem.shinyapps.io/sharkTank-shinyApp/
+
 ## Right-hand side
 On the right hand side, you see a scatter plot showing all the companies that have gotten deals. Currently only 3 seasons are included in the data, but more can easily be added.
 

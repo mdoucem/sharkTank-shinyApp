@@ -1,5 +1,3 @@
-setwd("C:/Users/munezero/Documents/Personal-ventures/blog-munezero/Shark-tank/shiny-visuals")
-
 library(shiny)
 library(ggvis)
 
@@ -10,15 +8,15 @@ sharktank$gender<-as.numeric(sharktank$gender)
 runApp(list(ui = pageWithSidebar(
   div(),
   sidebarPanel(
-    h3('Select a maximum valuation amount to see all those deals made under that amount'),
-    sliderInput("n", "Valuation amount", min = min(sharktank$deal_amount), max = max(sharktank$deal_amount),
+    h3('Select a maximum deal amount to see all those deals made under that amount'),
+    sliderInput("n", "Deal amount (in thousands)", min = min(sharktank$deal_amount), max = max(sharktank$deal_amount),
                  value = mean(sharktank$deal_amount), step = 10),
     br(),
     h3('Interested in deals from a particular Season?'),
     selectInput('var', 'Select the season', choices = c("All" = 0, "1" = 1, "2" = 2, "3" = 3), selected = 0),
 
     br(),
-    h3('You can also select by Gender'),
+    h3('You can also select by gender of the presenters.'),
     radioButtons("gend", "Select the gender", choices = c("All" = 0, "Female" = 1, "Male" = 2, "Mixed Team"= 3), selected = 0),
     
     uiOutput("plot_ui")
@@ -30,16 +28,17 @@ runApp(list(ui = pageWithSidebar(
 )
 , server= function(input, output, session) {
   mtc <- reactive({
+    amnt = as.numeric(input$n)
     seas = as.numeric(input$var)
     gend = as.numeric(input$gend)
     if (seas == 0 & gend == 0){
-      df = sharktank
+      df = subset(sharktank, deal_amount < amnt)
     } else if (seas == 0){
-      df = subset(sharktank, deal_amount < input$n & gender == gend)
+      df = subset(sharktank, deal_amount < amnt & gender == gend)
     } else if (gend == 0) {
-      df = subset(sharktank, deal_amount < input$n & Season == seas)
+      df = subset(sharktank, deal_amount < amnt & Season == seas)
     } else {
-      df = subset(sharktank, deal_amount < input$n & Season == seas & gender == gend)
+      df = subset(sharktank, deal_amount < amnt & Season == seas & gender == gend)
     }
     df$long = as.character(paste0("Company: ",df$Name,"<br>", " Valuation: ",df$deal_eval, "K"))
     df
